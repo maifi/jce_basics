@@ -45,15 +45,22 @@ public class testing {
 		AID appletAID = new AID(appletAIDBytes, (short) 0, (byte) appletAIDBytes.length);
 		simulator.installApplet(appletAID, JcAES.class);
 		simulator.selectApplet(appletAID);
-		// test NOP
-		byte[] a = new byte[16];
-		CommandAPDU cmd = new CommandAPDU(0x66, 0x01, 0x00,0x00,a,0x10);
-		System.out.println(cmd.getNc());
-		System.out.println(cmd.getNe());
+		//Encrypt
+		byte[] a = new byte[8];
+		for(int i = 0; i<8; i++)
+			a[i] = (byte) i;
+		System.out.println("To Encrypt: " + Utils.byteArrayToHexString(a));
+		CommandAPDU cmd = new CommandAPDU(0x66, 0x01, 0x00,0x00,new byte[]{0x01,0x02,0x03,0x04,0x05,0x06,7,8},0x10);
 		ResponseAPDU response = simulator.transmitCommand(cmd);
 		System.out.println("0x"+Integer.toHexString(response.getSW()));
+		System.out.println("Encrypted :" + Utils.byteArrayToHexString(response.getData()));
+		
+		//Decrypt
+		cmd = new CommandAPDU(0x66, 0x02, 0x00,0x00,response.getData(),0x8);
+		response = simulator.transmitCommand(cmd);
+		System.out.println("0x"+Integer.toHexString(response.getSW()));
 
-		System.out.println(Utils.byteArrayToHexString(response.getData()));
+		System.out.println("Decrypted again: " + Utils.byteArrayToHexString(response.getData()));
 	
 	}
 	
