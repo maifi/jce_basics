@@ -13,7 +13,16 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 
+import javacard.framework.AID;
+import javacard.framework.ISO7816;
+
+import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
+import javax.smartcardio.CommandAPDU;
+import javax.smartcardio.ResponseAPDU;
+
+import com.licel.jcardsim.base.Simulator;
+import com.sun.crypto.provider.AESCipher;
 
 public class testing {
 
@@ -25,7 +34,27 @@ public class testing {
 	    iaik.security.provider.IAIK iaik = new
 	    		iaik.security.provider.IAIK();
 	    iaik.addAsProvider(true);  
-		esdh();
+		//esdh();
+	    simulateApplet();
+	}
+	
+	private static void simulateApplet(){
+		Simulator simulator = new Simulator();
+
+		byte[] appletAIDBytes = new byte[]{(byte) 0xD2, 0x76, 0x00, 0, 0x60, 0x41};
+		AID appletAID = new AID(appletAIDBytes, (short) 0, (byte) appletAIDBytes.length);
+		simulator.installApplet(appletAID, JcAES.class);
+		simulator.selectApplet(appletAID);
+		// test NOP
+		byte[] a = new byte[16];
+		CommandAPDU cmd = new CommandAPDU(0x66, 0x01, 0x00,0x00,a,0x10);
+		System.out.println(cmd.getNc());
+		System.out.println(cmd.getNe());
+		ResponseAPDU response = simulator.transmitCommand(cmd);
+		System.out.println("0x"+Integer.toHexString(response.getSW()));
+
+		System.out.println(Utils.byteArrayToHexString(response.getData()));
+	
 	}
 	
 	private static void esdh(){
@@ -35,6 +64,7 @@ public class testing {
 			KeyPair dh_keypair = keyGen.generateKeyPair();
 			ESDHPrivateKey esdh_priv_key = (ESDHPrivateKey)dh_keypair.getPrivate();
 			ESDHPublicKey esdh_pub_key = (ESDHPublicKey)dh_keypair.getPublic();
+			
 			
 			 // we want AES key wrap
 			 AlgorithmID aesWrap = AlgorithmID.cms_aes128_wrap;
@@ -47,6 +77,7 @@ public class testing {
 			 // now create an ESDHKeyAgreement object:
 			 KeyAgreement esdh_key_agreement = KeyAgreement.getInstance("ESDH", "IAIK");
 			 SecureRandom sr = new iaik.security.random.SHA1Random();
+			 
 			 
 
 			 esdh_key_agreement.init(esdh_priv_key, otherInfo, sr);
