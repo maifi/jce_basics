@@ -45,18 +45,18 @@ public class testing {
 		AID appletAID = new AID(appletAIDBytes, (short) 0, (byte) appletAIDBytes.length);
 		simulator.installApplet(appletAID, JcAES.class);
 		simulator.selectApplet(appletAID);
-		//Encrypt
+		//Encrypt DES
 		byte[] a = new byte[8];
 		for(int i = 0; i<8; i++)
 			a[i] = (byte) i;
 		System.out.println("To Encrypt: " + Utils.byteArrayToHexString(a));
-		CommandAPDU cmd = new CommandAPDU(0x66, 0x01, 0x00,0x00,new byte[]{0x01,0x02,0x03,0x04,0x05,0x06,7,8},0x10);
+		CommandAPDU cmd = new CommandAPDU(0x66, 0x03, 0x00,0x00,a,0x08);
 		ResponseAPDU response = simulator.transmitCommand(cmd);
 		System.out.println("0x"+Integer.toHexString(response.getSW()));
 		System.out.println("Encrypted :" + Utils.byteArrayToHexString(response.getData()));
 		
-		//Decrypt
-		cmd = new CommandAPDU(0x66, 0x02, 0x00,0x00,response.getData(),0x8);
+		//Decrypt DES
+		cmd = new CommandAPDU(0x66, 0x04, 0x00,0x00,response.getData(),0x8);
 		response = simulator.transmitCommand(cmd);
 		System.out.println("0x"+Integer.toHexString(response.getSW()));
 
