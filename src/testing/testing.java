@@ -40,7 +40,7 @@ public class testing {
 	
 	private static void simulateApplet(){
 		Simulator simulator = new Simulator();
-
+		
 		byte[] appletAIDBytes = new byte[]{(byte) 0xD2, 0x76, 0x00, 0, 0x60, 0x41};
 		AID appletAID = new AID(appletAIDBytes, (short) 0, (byte) appletAIDBytes.length);
 		simulator.installApplet(appletAID, JcAES.class);
@@ -50,7 +50,7 @@ public class testing {
 		for(int i = 0; i<8; i++)
 			a[i] = (byte) i;
 		System.out.println("To Encrypt: " + Utils.byteArrayToHexString(a));
-		CommandAPDU cmd = new CommandAPDU(0x66, 0x03, 0x00,0x00,a,0x08);
+		CommandAPDU cmd = new CommandAPDU(0x66, 0x01, 0x00,0x00,a,0x08);
 		ResponseAPDU response = simulator.transmitCommand(cmd);
 		System.out.println("0x"+Integer.toHexString(response.getSW()));
 		System.out.println("Encrypted :" + Utils.byteArrayToHexString(response.getData()));
