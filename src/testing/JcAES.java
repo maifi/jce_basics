@@ -105,7 +105,7 @@ public class JcAES extends Applet {
 	private byte[] aesEncrypt(byte[] data){
 		
 		try{
-		Cipher cipher = Cipher.getInstance(Cipher.ALG_AES_BLOCK_128_ECB_NOPAD,false);
+		Cipher cipher = Cipher.getInstance(Cipher.ALG_AES_BLOCK_128_CBC_NOPAD,false);
 		AESKey aeskey = (AESKey) KeyBuilder.buildKey(KeyBuilder.TYPE_AES, KeyBuilder.LENGTH_AES_128, false);
 		aeskey.setKey(_aesKey, (short) 0);
 		boolean a = aeskey.isInitialized();//true
@@ -132,8 +132,8 @@ public class JcAES extends Applet {
 		aeskey.setKey(_aesKey, (short) 0);
 		cipher.getAlgorithm();
 		cipher.init((Key)aeskey, Cipher.MODE_DECRYPT);
-		byte[] result = new byte[8];
-		cipher.doFinal(data, (short) 0, (byte) 0x08, result, (short) 0);
+		byte[] result = new byte[16];
+		cipher.doFinal(data, (short) 0, (byte) data.length, result, (short) 0);
 		return result;
 		}catch(Exception e){
 			e.printStackTrace();
