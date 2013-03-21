@@ -133,7 +133,7 @@ public class JcAES extends Applet {
 		cipher.getAlgorithm();
 		cipher.init((Key)aeskey, Cipher.MODE_DECRYPT);
 		byte[] result = new byte[16];
-		cipher.doFinal(data, (short) 0, (byte) data.length, result, (short) 0);
+		cipher.doFinal(data, (short) 0, (byte) result.length, result, (short) 0);
 		return result;
 		}catch(Exception e){
 			e.printStackTrace();
